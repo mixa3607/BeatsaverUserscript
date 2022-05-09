@@ -6,7 +6,8 @@ Some modifications for https://beatsaver.com
 ![screenshot](./docs/screenshot1.png)
 
 ## Install
-Just open [this url](https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js)
+1. Install any extension for userscripts (tested on Tampermonkey)
+2. Just open [this url](https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js)
 
 ## Development
 For local build you must apply patch from [this pull request](https://github.com/Trim21/axios-userscript-adapter/pull/58).
