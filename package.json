@@ -1,0 +1,31 @@
+{
+  "version": "0.0.1",
+  "scripts": {
+    "build:watch": "webpack serve --progress --env development",
+    "build:release": "webpack --progress --env production",
+    "analyze": "webpack --progress --env production --env analyze"
+  },
+  "devDependencies": {
+    "@types/greasemonkey": "^4.0.2",
+    "@types/node": "^17.0.31",
+    "@types/webpack-env": "^1.16.3",
+    "clean-webpack-plugin": "^4.0.0",
+    "dotenv": "^16.0.0",
+    "ts-loader": "^9.2.9",
+    "tsutils": "^3.21.0",
+    "typescript": "^4.6.3",
+    "webpack": "^5.72.0",
+    "webpack-bundle-analyzer": "^4.5.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.8.1",
+    "webpack-userscript": "^2.5.8"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.5.5",
+    "tslib": "^2.4.0",
+    "typedi": "^0.10.0",
+    "axios": "^0.27.2",
+    "axios-userscript-adapter": "^0.1.12"
+  }
+}

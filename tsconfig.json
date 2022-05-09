@@ -1,0 +1,40 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES5",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "types": ["reflect-metadata", "node"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "lib": [
+      "dom",
+      "es2015",
+      "es6"
+    ],
+    "jsx": "react",
+    "allowJs": false
+  },
+  "include": [
+    "src/**/*.tsx",
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "node_modules",
+    "*.test.ts"
+  ]
+}
