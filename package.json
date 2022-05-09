@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build:watch": "webpack serve --progress --env development",
     "build:release": "webpack --progress --env production",
@@ -26,6 +26,6 @@
     "tslib": "^2.4.0",
     "typedi": "^0.10.0",
     "axios": "^0.27.2",
-    "axios-userscript-adapter": "^0.1.12"
+    "axios-userscript-adapter": "^0.2.0"
   }
 }

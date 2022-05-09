@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        Beatsaver QOL
-// @version     0.0.2
+// @version     0.0.3
 // @author      mixa3607
 // @description -
 // @supportURL  https://github.com/mixa3607/BeatsaverUserscript/issues
