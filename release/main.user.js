@@ -1,13 +1,18 @@
 // ==UserScript==
 // @name        Beatsaver QOL
-// @version     0.0.1
+// @version     0.0.2
 // @author      mixa3607
 // @description -
+// @supportURL  https://github.com/mixa3607/BeatsaverUserscript/issues
 // @match       https://beatsaver.com/*
 // @icon        https://www.google.com/s2/favicons?sz=64&domain=beatsaver.com
 // @grant       GM.xmlHttpRequest
 // @connect     beatsaver.com
 // @run-at      document-start
+// @downloadURL https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js
+// @updateURL   https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js
+// @installURL  https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js
+// @homepageURL https://github.com/mixa3607/BeatsaverUserscript
 // ==/UserScript==
 
 /*! For license information please see main.js.LICENSE.txt */

@@ -50,7 +50,12 @@ module.exports = env => {
           icon: 'https://www.google.com/s2/favicons?sz=64&domain=beatsaver.com',
           grant: ['GM.xmlHttpRequest'],
           connect: ['beatsaver.com'],
-          "run-at": 'document-start'
+          "run-at": 'document-start',
+          downloadURL: 'https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js',
+          updateURL: 'https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js',
+          installURL: 'https://github.com/mixa3607/BeatsaverUserscript/raw/master/release/main.user.js',
+          homepageURL: 'https://github.com/mixa3607/BeatsaverUserscript',
+          supportURL: 'https://github.com/mixa3607/BeatsaverUserscript/issues'
         },
         proxyScript: {
           filename: '[basename].proxy.user.js',
