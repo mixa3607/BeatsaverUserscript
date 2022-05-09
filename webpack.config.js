@@ -49,6 +49,7 @@ module.exports = env => {
           match: 'https://beatsaver.com/*',
           icon: 'https://www.google.com/s2/favicons?sz=64&domain=beatsaver.com',
           grant: ['GM.xmlHttpRequest'],
+          connect: ['beatsaver.com'],
           "run-at": 'document-start'
         },
         proxyScript: {

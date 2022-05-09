@@ -39,7 +39,6 @@ export class SearchResultPagePatcher {
   }
 
   private buildPlayButton(audioUrl: string): HTMLAnchorElement {
-
     const iEl = document.createElement('i');
     iEl.classList.add('fas', 'fa-play-circle', 'text-info');
     iEl.ariaHidden = 'true';
@@ -47,6 +46,7 @@ export class SearchResultPagePatcher {
     const aEl = document.createElement('a');
     aEl.ariaLabel = '10 sec';
     aEl.title = '10 sec';
+    aEl.style.margin = '0';
     aEl.appendChild(iEl);
     aEl.addEventListener('click', async () => {
       if (playerEl.paused) {
@@ -76,8 +76,6 @@ export class SearchResultPagePatcher {
       iEl.classList.add('fa-play-circle');
     });
     this.players.push(playerEl);
-
-
     return aEl;
   }
 
@@ -106,71 +104,8 @@ export class SearchResultPagePatcher {
       this.logger.warn('Prew url empty');
       return;
     }
-
     linksDivEl.appendChild(this.buildPlayButton(audPrewUrl));
-
-    //const infoDivEl = divEl.querySelector('.info') as HTMLDivElement;
-    //infoDivEl.style.display = 'flex';
-    //infoDivEl.style.flexDirection = 'column';
-
-    //const gapDivEl = document.createElement('div');
-    //gapDivEl.style.height = '100%';
-
-    //const playerDivEl = this.buildPlayerDiv1(audPrewUrl);
-
-    //infoDivEl.appendChild(gapDivEl);
-    //infoDivEl.appendChild(playerDivEl);
-
     this.logger.debug('Patch map card', divEl);
-  }
-
-  private buildPlayerDiv(audioUrl: string): HTMLDivElement {
-    const playerDivEl = document.createElement('div');
-    playerDivEl.style.height = '2rem';
-    playerDivEl.style.width = '100%';
-
-    const playerEl = document.createElement('audio');
-    playerEl.style.height = '100%';
-    playerEl.style.width = '100%';
-    playerEl.controls = true;
-    playerEl.src = audioUrl;
-    playerEl.preload = 'none';
-    playerEl.addEventListener("play", () => this.players.filter(x => x !== playerEl).forEach(x => {
-      x.pause();
-      x.currentTime = 0;
-    }));
-    this.players.push(playerEl);
-
-    playerDivEl.appendChild(playerEl);
-    return playerDivEl;
-  }
-
-  private buildPlayerDiv1(audioUrl: string): HTMLDivElement {
-    const playerDivEl = document.createElement('div');
-    playerDivEl.style.height = '2rem';
-    playerDivEl.style.width = '100%';
-
-    const playerEl = document.createElement('audio');
-    playerEl.style.height = '100%';
-    playerEl.style.width = '100%';
-    playerEl.controls = false;
-    playerEl.preload = 'none';
-    playerEl.addEventListener("play", () => this.players.filter(x => x !== playerEl).forEach(x => {
-      x.pause();
-      x.currentTime = 0;
-    }));
-    playerEl.addEventListener("loadstart", () => this.logger.error('load start'));
-    axios({
-      url: audioUrl,
-      method: 'GET',
-      responseType: 'arraybuffer',
-    }).then((response) => {
-      playerEl.src = 'data:audio/mpeg;base64,' + this.arrayBufferToBase64(response.data);
-    });
-    this.players.push(playerEl);
-
-    playerDivEl.appendChild(playerEl);
-    return playerDivEl;
   }
 
   private async getB64Audio(url: string): Promise<string> {
