@@ -9,7 +9,9 @@ import axios from "axios";
 @Service()
 export class SearchResultPagePatcher {
   private maps: MapDetail[] = [];
-  private players: HTMLAudioElement[] = [];
+  private buttons: { i: HTMLElement; a: HTMLAnchorElement; songId: string }[] = [];
+  private audioPlayer: HTMLAudioElement;
+  private audioCache: { remoteUrl: string; localUrl: string }[] = [];
 
   constructor(@InjectLogger('SRPatcher') private logger: ILogger,
               private xhrHooker: XhrHooker,
@@ -26,19 +28,22 @@ export class SearchResultPagePatcher {
       this.logger.info('Add maps:', resp.docs.length);
     }));
 
-    //this.domChangeDetector.mutations$.subscribe(x => this.logger.debug(x));
     this.domChangeDetector.mutations$.pipe(
       filter(x =>
         x.target instanceof HTMLDivElement && x.target.classList.contains('beatmap') &&
         x.addedNodes.length === 1 && x.addedNodes[0] instanceof HTMLDivElement && x.addedNodes[0].classList.contains('body')
       ),
       map(x => x.addedNodes[0] as HTMLDivElement)
-    ).subscribe(x => setTimeout(() => this.patchMapCard(x), 150));
+    ).subscribe(x => this.patchMapCard(x));
+
+    this.audioPlayer = document.createElement('audio');
+    this.audioPlayer.controls = false;
+    this.audioPlayer.addEventListener('pause', () => this.setPlayStyle(null));
 
     this.logger.info('Initialized');
   }
 
-  private buildPlayButton(audioUrl: string): HTMLAnchorElement {
+  private buildPlayButton(songId: string): HTMLAnchorElement {
     const iEl = document.createElement('i');
     iEl.classList.add('fas', 'fa-play-circle', 'text-info');
     iEl.ariaHidden = 'true';
@@ -49,34 +54,42 @@ export class SearchResultPagePatcher {
     aEl.style.margin = '0';
     aEl.appendChild(iEl);
     aEl.addEventListener('click', async () => {
-      if (playerEl.paused) {
-        if (playerEl.src == null || playerEl.src == '') {
-          iEl.classList.add('fa-spinner');
-          playerEl.src = await this.getB64Audio(audioUrl);
-          iEl.classList.remove('fa-spinner');
-        }
-        await playerEl.play();
-      } else {
-        playerEl.pause();
+      if (iEl.classList.contains('playing')){
+        this.audioPlayer.pause();
+        return;
       }
-    });
 
-    const playerEl = document.createElement('audio');
-    playerEl.controls = false;
-    playerEl.addEventListener('play', () => {
-      this.players.filter(x => x !== playerEl).forEach(x => {
-        x.pause();
-        x.currentTime = 0;
-      });
-      iEl.classList.remove('fa-play-circle');
-      iEl.classList.add('fa-pause-circle');
+      const remoteUrl = this.maps.find(x => x.id === songId).versions.find(x => x.previewURL != null && x.previewURL != '')?.previewURL;
+      if (remoteUrl == null) {
+        this.logger.warn('Preview url for song not found', songId);
+        aEl.style.cursor = 'pointer';
+        return;
+      }
+      iEl.classList.add('fa-spinner');
+      const localUrl = await this.getAudioLocalUrl(remoteUrl);
+      iEl.classList.remove('fa-spinner');
+
+      this.audioPlayer.pause();
+      this.audioPlayer.currentTime = 0;
+      this.audioPlayer.src = localUrl;
+      this.setPlayStyle(songId);
+      await this.audioPlayer.play();
     });
-    playerEl.addEventListener('pause', () => {
-      iEl.classList.remove('fa-pause-circle');
-      iEl.classList.add('fa-play-circle');
-    });
-    this.players.push(playerEl);
+    this.buttons.push({i: iEl, a: aEl, songId});
+
     return aEl;
+  }
+
+  private setPlayStyle(songId: string | null): void {
+    for (const button of this.buttons) {
+      if (button.songId === songId) {
+        button.i.classList.add('fa-pause-circle', 'playing');
+        button.i.classList.remove('fa-play-circle');
+      } else {
+        button.i.classList.add('fa-play-circle');
+        button.i.classList.remove('fa-pause-circle', 'playing');
+      }
+    }
   }
 
   private patchMapCard(divEl: HTMLDivElement) {
@@ -93,33 +106,18 @@ export class SearchResultPagePatcher {
       return;
     }
 
-    const mapInfo = this.maps.find(x => x.id === id);
-    if (mapInfo == null) {
-      this.logger.warn('Can\'t find map info', id);
-      return;
-    }
-
-    const audPrewUrl = mapInfo.versions.find(x => x.previewURL != null).previewURL;
-    if (audPrewUrl == null) {
-      this.logger.warn('Prew url empty');
-      return;
-    }
-    linksDivEl.appendChild(this.buildPlayButton(audPrewUrl));
+    linksDivEl.appendChild(this.buildPlayButton(id));
     this.logger.debug('Patch map card', divEl);
   }
 
-  private async getB64Audio(url: string): Promise<string> {
-    const resp = await axios.get(url, {responseType: 'arraybuffer'});
-    return 'data:audio/mpeg;base64,' + this.arrayBufferToBase64(resp.data);
-  }
-
-  private arrayBufferToBase64(buffer: ArrayBuffer): string {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
+  private async getAudioLocalUrl(url: string): Promise<string> {
+    const cached = this.audioCache.find(x => x.remoteUrl === url);
+    if (cached != null) {
+      return cached.localUrl;
     }
-    return window.btoa(binary);
+    const resp = await axios.get<Blob>(url, {responseType: 'blob'});
+    const blobUrl = URL.createObjectURL(resp.data);
+    this.audioCache.push({localUrl: blobUrl, remoteUrl: url});
+    return blobUrl;
   }
 }

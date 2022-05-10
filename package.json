@@ -1,5 +1,5 @@
 {
-  "version": "0.0.3",
+  "version": "0.0.4",
   "scripts": {
     "build:watch": "webpack serve --progress --env development",
     "build:release": "webpack --progress --env production",
